@@ -1,0 +1,89 @@
+{
+  "name": "refactor-radartest",
+  "displayName": "refactor-radarTest",
+  "description": "Extension to test a sidebar with a button",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:refactorRadar.sidebar"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "refactor-radartest.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "refactor-radartest.refactorCode",
+        "title": "Refactor Code"
+      },
+      {
+        "command": "refactor-radartest.toggleFileSelect",
+        "title": "Toggle File Selection"
+      },
+      {
+        "command": "refactor-radartest.runRefactor",
+        "title": "Run Refactor"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "refactorRadarSidebar",
+          "title": "Refactor Radar",
+          "icon": "media/Radar.svg"
+        }
+      ]
+    },
+    "views": {
+      "refactorRadarSidebar": [
+        {
+          "id": "refactorFileView",
+          "name": "Project Files"
+        }
+      ]
+    }, "menus": {
+    "view/title": [
+      {
+        "command": "refactor-radartest.runRefactor",
+        "when": "view == refactorFileView",
+        "group": "navigation"
+      }
+    ]
+  }
+  },
+  "menus": {
+    "view/item/context": [
+      {
+        "command": "refactor-radartest.toggleFileSelect",
+        "when": "view == refactorFileView",
+        "group": "inline"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.102.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
