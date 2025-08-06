@@ -124,6 +124,10 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInformationMessage(`Running refactor on ${selectedFiles.length} files...`);
 
 			try {
+				console.log('This is the extension page', selectedFiles)
+				//Alternative for testing
+				vscode.window.showInformationMessage(`Selected files: ${selectedFiles.map(f => f.fsPath).join(', ')}`);
+
 				// 🔁 Send files to backend
 				const response: any = await sendFilePathsToBackend(selectedFiles);
 

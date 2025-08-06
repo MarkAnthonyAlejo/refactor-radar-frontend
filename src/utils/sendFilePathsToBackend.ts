@@ -1,22 +1,30 @@
 //Files being sent to the backend 
+import axios from 'axios';
 import * as vscode from 'vscode';
 
 export async function sendFilePathsToBackend(selectedFiles: vscode.Uri[]): Promise<void> {
-  const filePaths: string[] = selectedFiles.map(uri => uri.fsPath);
+    try {
+    // 1. Read the contents of each selected file
+    const fileData = await Promise.all(
+      selectedFiles.map(async (uri) => {
+        const content = await vscode.workspace.fs.readFile(uri);
+        return {
+          filename: uri.fsPath,
+          code: Buffer.from(content).toString('utf8'),
+        };
+      })
+    );
 
-  const payload: { files: string[] } = { files: filePaths };
+    // 2. Log the payload before sending
+    console.log("📤 Sending payload to backend:", fileData);
 
-  try {
-    const response = await fetch('http://localhost:3000/refactor', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    // 3. Send the payload to your backend
+    const response = await axios.post('http://localhost:8000/api/refactor', fileData);
 
-    const data = await response.json() as { message: string };
-
-    vscode.window.showInformationMessage(`Refactor response: ${data.message}`);
-  } catch (error) {
-    vscode.window.showErrorMessage(`Failed to send files to backend: ${error}`);
+    // 4. Show success message
+    vscode.window.showInformationMessage(`Refactor response: ${response.data.message || 'Success'}`);
+  } catch (error: any) {
+    console.error("Request failed:", error);
+    vscode.window.showErrorMessage(`Failed to send files to backend: ${error.message}`);
   }
 }
