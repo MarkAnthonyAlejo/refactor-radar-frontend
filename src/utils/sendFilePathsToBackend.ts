@@ -19,7 +19,7 @@ export async function sendFilePathsToBackend(selectedFiles: vscode.Uri[]): Promi
     console.log("📤 Sending payload to backend:", fileData);
 
     // 3. Send the payload to your backend
-    const response = await axios.post('http://localhost:8000/api/refactor', fileData);
+    const response = await axios.post('http://localhost:8000/api/analyze', fileData);
 
     // 4. Show success message
     vscode.window.showInformationMessage(`Refactor response: ${response.data.message || 'Success'}`);
