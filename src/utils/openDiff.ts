@@ -1,3 +1,4 @@
+//Ignore OpenDiff.ts for now and can be implemented later 
 import * as vscode from "vscode";
 
 export async function openDiffInVSCode(
