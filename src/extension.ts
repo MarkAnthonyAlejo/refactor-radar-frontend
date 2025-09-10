@@ -92,6 +92,8 @@ function getWebviewContent(result: any): string {
 		originalCode,
 	} = result;
 
+	const langClass = filename.endsWith('.ts') || filename.endsWith('.tsx') ? 'language-ts' : 'language-js';
+
 	return `
     <section>
       <h1 style="color:#007acc;">Refactor Report – ${filename}</h1>
@@ -109,7 +111,9 @@ function getWebviewContent(result: any): string {
       <ul>${(suggestions || []).map((s: string) => `<li>${s}</li>`).join('')}</ul>
       
       <h2>Original Code</h2>
-      <pre>${escapeHtml(originalCode || '')}</pre>
+	  <pre><code class="${langClass}">${escapeHtml(originalCode || '')}</code></pre>
+
+
       
       <h2>Refactored Code</h2>
       <pre>${escapeHtml(refactoredCode || '')}</pre>
@@ -148,6 +152,10 @@ function getWebviewContent(result: any): string {
         }
       });
     </script>
+	<script>
+  		Prism.highlightAll();
+	</script>
+
   `;
 }
 
@@ -156,6 +164,10 @@ function getFullWebviewContent(results: any[]): string {
     <!DOCTYPE html>
     <html lang="en">
     <head>
+	<link href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-typescript.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-javascript.min.js"></script>
       <meta charset="UTF-8" />
       <style>
         body { background:#1e1e1e; color:white; font-family:sans-serif; padding:1rem; }
