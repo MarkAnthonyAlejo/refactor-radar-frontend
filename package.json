@@ -86,11 +86,11 @@
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.25.1",
+    "prettier": "^3.6.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "axios": "^1.11.0",
-    "node-fetch": "^3.3.2",
-    "prettier": "^3.6.2"
+    "node-fetch": "^3.3.2"
   }
 }
