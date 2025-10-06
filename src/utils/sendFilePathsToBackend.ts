@@ -5,7 +5,7 @@ import * as fs from "fs";
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
