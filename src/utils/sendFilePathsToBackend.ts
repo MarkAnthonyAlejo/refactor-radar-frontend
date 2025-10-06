@@ -1,9 +1,22 @@
 import * as vscode from "vscode";
 import axios from "axios";
+import * as path from "path";
+import * as fs from "fs";
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+const BACKEND_URL = process.env.BACKEND_URL;
 
 export async function sendFilePathsToBackend(
   selectedFiles: vscode.Uri[]
-): Promise<any[]> { // ⬅️ note return type is now array of results
+): Promise<any[]> {
+  if (!BACKEND_URL) {
+    vscode.window.showErrorMessage("Backend URL not set in .env");
+    return [];
+  }
+
   try {
     // 1. Prepare files
     const fileData = await Promise.all(
@@ -16,16 +29,16 @@ export async function sendFilePathsToBackend(
       })
     );
 
-    // 2. Call backend
+    // 2. Call backend using environment variable
     console.log("Sending files to backend:", fileData.map(f => f.filename));
     const response = await axios.post(
-      "http://localhost:8000/api/analyze",
+      `${BACKEND_URL}/api/analyze`,
       fileData
     );
 
     console.log("Backend response:", response.data);
 
-    // 3. Just return results (no UI, no editors)
+    // 3. Return results
     return response.data.results || response.data;
   } catch (error: any) {
     vscode.window.showErrorMessage(
