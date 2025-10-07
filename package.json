@@ -1,10 +1,15 @@
 {
   "name": "refactor-radartest",
-  "displayName": "refactor-radarTest",
-  "description": "Extension to test a sidebar with a button",
+  "displayName": "Refactor Radar",
+  "description": "AI-powered VSCode extension for code analysis and refactoring",
   "version": "0.0.1",
+  "publisher": "MarkAlejo", 
   "engines": {
     "vscode": "^1.102.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarkAnthonyAlejo/refactor-radar-frontend"
   },
   "categories": [
     "Other"
@@ -74,7 +79,10 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build": "tsc",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/diff": "^7.0.2",
