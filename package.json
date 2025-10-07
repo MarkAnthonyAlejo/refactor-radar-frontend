@@ -2,7 +2,7 @@
   "name": "refactor-radartest",
   "displayName": "Refactor Radar",
   "description": "AI-powered VSCode extension for code analysis and refactoring",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "MarkAlejo",
   "engines": {
     "vscode": "^1.102.0"
