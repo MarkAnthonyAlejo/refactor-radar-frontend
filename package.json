@@ -2,8 +2,8 @@
   "name": "refactor-radartest",
   "displayName": "Refactor Radar",
   "description": "AI-powered VSCode extension for code analysis and refactoring",
-  "version": "0.0.1",
-  "publisher": "MarkAlejo", 
+  "version": "0.0.2",
+  "publisher": "MarkAlejo",
   "engines": {
     "vscode": "^1.102.0"
   },
@@ -11,11 +11,10 @@
     "type": "git",
     "url": "https://github.com/MarkAnthonyAlejo/refactor-radar-frontend"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "activationEvents": [
-    "onView:refactorRadarSidebar"
+    "onView:refactorFileView",
+    "onCommand:refactor-radartest.runRefactor"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -61,17 +60,15 @@
           "when": "view == refactorFileView",
           "group": "navigation"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "refactor-radartest.toggleFileSelect",
+          "when": "view == refactorFileView",
+          "group": "inline"
+        }
       ]
     }
-  },
-  "menus": {
-    "view/item/context": [
-      {
-        "command": "refactor-radartest.toggleFileSelect",
-        "when": "view == refactorFileView",
-        "group": "inline"
-      }
-    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
