@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as prettier from 'prettier';
-import { sendFilePathsToBackend } from './utils/sendFilePathsToBackend';
 import { diffLines, Change } from 'diff';
+import { sendFilePathsToBackend } from './utils/sendFilePathsToBackend';
 
 // =======================================================
 // ------------------ Classes ---------------------------
@@ -75,10 +75,7 @@ class FileTreeProvider implements vscode.TreeDataProvider<FileNode> {
 // =======================================================
 
 function escapeHtml(unsafe: string): string {
-  return unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function getTechDebtColor(score: number): string {
@@ -130,16 +127,10 @@ function buildPrettyDiffHtml(original: string, refactored: string): string {
     .map((part: Change) => {
       const lines = part.value.split('\n');
       if (part.added)
-        return lines
-          .map((l: string) => `<div class="added">${escapeHtml(l)}</div>`)
-          .join('');
+        return lines.map((l: string) => `<div class="added">${escapeHtml(l)}</div>`).join('');
       if (part.removed)
-        return lines
-          .map((l: string) => `<div class="removed">${escapeHtml(l)}</div>`)
-          .join('');
-      return lines
-        .map((l: string) => `<div class="unchanged">${escapeHtml(l)}</div>`)
-        .join('');
+        return lines.map((l: string) => `<div class="removed">${escapeHtml(l)}</div>`).join('');
+      return lines.map((l: string) => `<div class="unchanged">${escapeHtml(l)}</div>`).join('');
     })
     .join('');
 
@@ -180,48 +171,24 @@ async function getWebviewContent(result: any): Promise<string> {
   return `
     <section>
       <h1 style="color:#4493F8;">Refactor Report – ${filename}</h1>
-      <p>
-        <b>Tech Debt Score:</b>
-        <span style="color:${getTechDebtColor(techDebtScore)};">${techDebtScore}/100</span>
-      </p>
+      <p><b>Tech Debt Score:</b> <span style="color:${getTechDebtColor(techDebtScore)};">${techDebtScore}/100</span></p>
       <p><b>Explanation:</b> ${explanation}</p>
 
       <h2>Suggestions</h2>
       <ul>${(suggestions || []).map((s: string) => `<li>${s}</li>`).join('')}</ul>
 
       <h2 style="color:#F0F6FD;">Original Code</h2>
-      <pre style="
-        background:#0C1117;
-        border:1px solid #3D444D;
-        border-radius:6px;
-        padding:1rem;
-        overflow-x:auto;
-      ">
+      <pre style="background:#0C1117;border:1px solid #3D444D;border-radius:6px;padding:1rem;overflow-x:auto;">
         <code class="language-${lang}">${escapeHtml(formattedOriginal)}</code>
       </pre>
 
-      <h2 style="display:flex; align-items:center; gap:0.5rem; color:#228736; font-weight:600;">
+      <h2 style="display:flex;align-items:center;gap:0.5rem;color:#228736;font-weight:600;">
         Refactored Code
-        <span style="
-          background:#228736;
-          color:#fff;
-          font-size:0.75rem;
-          padding:2px 8px;
-          border-radius:12px;
-          text-transform:uppercase;
-          letter-spacing:0.5px;
-        ">New</span>
+        <span style="background:#228736;color:#fff;font-size:0.75rem;padding:2px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:0.5px;">New</span>
       </h2>
-      <div style="border-left:3px solid #228736; padding-left:0.75rem; margin-top:0.5rem;">
-        <pre style="
-          background:#0C1117;
-          border:1px solid #333;
-          border-radius:6px;
-          padding:1rem;
-          font-size:0.85rem;
-          overflow-x:auto;
-        ">
-<code class="language-${lang}">${escapeHtml(formattedRefactored)}</code>
+      <div style="border-left:3px solid #228736;padding-left:0.75rem;margin-top:0.5rem;">
+        <pre style="background:#0C1117;border:1px solid #333;border-radius:6px;padding:1rem;font-size:0.85rem;overflow-x:auto;">
+          <code class="language-${lang}">${escapeHtml(formattedRefactored)}</code>
         </pre>
       </div>
 
@@ -290,27 +257,24 @@ export function activate(context: vscode.ExtensionContext) {
   const fileTreeProvider = new FileTreeProvider();
   vscode.window.registerTreeDataProvider('refactorFileView', fileTreeProvider);
 
-  // Refresh tree when workspace folders change
+  // --- Watchers ---
   vscode.workspace.onDidChangeWorkspaceFolders(() => fileTreeProvider.refresh());
 
-  // Refresh tree when files are created/changed/deleted
   const fileWatcher = vscode.workspace.createFileSystemWatcher('**/*.{ts,js,tsx,jsx,html,css,json}');
   fileWatcher.onDidCreate(() => fileTreeProvider.refresh());
   fileWatcher.onDidDelete(() => fileTreeProvider.refresh());
   fileWatcher.onDidChange(() => fileTreeProvider.refresh());
   context.subscriptions.push(fileWatcher);
 
-  // Toggle File Selection
-  const toggleFileSelectCommand = vscode.commands.registerCommand(
-    'refactor-radartest.toggleFileSelect',
-    (uri: vscode.Uri) => fileTreeProvider.toggleSelection(uri)
+  // --- Commands ---
+  context.subscriptions.push(
+    vscode.commands.registerCommand('refactor-radartest.toggleFileSelect', (uri: vscode.Uri) => {
+      fileTreeProvider.toggleSelection(uri);
+    })
   );
-  context.subscriptions.push(toggleFileSelectCommand);
 
-  // Run Refactor & Show Webview
-  const runRefactorCommand = vscode.commands.registerCommand(
-    'refactor-radartest.runRefactor',
-    async () => {
+  context.subscriptions.push(
+    vscode.commands.registerCommand('refactor-radartest.runRefactor', async () => {
       const selectedFiles = fileTreeProvider.getSelectedFiles();
       if (!selectedFiles.length) {
         vscode.window.showWarningMessage('No files selected to refactor.');
@@ -391,10 +355,8 @@ export function activate(context: vscode.ExtensionContext) {
       } catch (error) {
         panel.webview.html = `<p style="color:red;padding:1rem;">❌ Refactor failed: ${error instanceof Error ? error.message : String(error)}</p>`;
       }
-    }
+    })
   );
-
-  context.subscriptions.push(runRefactorCommand);
 
   // Initial refresh so sidebar shows files immediately
   fileTreeProvider.refresh();

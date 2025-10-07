@@ -19,7 +19,8 @@
     "onCommand:refactor-radartest.helloWorld",
     "onCommand:refactor-radartest.refactorCode",
     "onCommand:refactor-radartest.toggleFileSelect",
-    "onCommand:refactor-radartest.runRefactor"
+    "onCommand:refactor-radartest.runRefactor",
+    "onView:refactorFileView"
   ],
   "contributes": {
     "commands": [
@@ -53,7 +54,7 @@
       "refactorRadarSidebar": [
         {
           "id": "refactorFileView",
-          "name": "Project Files"
+          "name": "Refactor Radar: Project Files"
         }
       ]
     },
