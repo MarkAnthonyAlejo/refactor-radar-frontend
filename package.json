@@ -2,7 +2,7 @@
   "name": "refactor-radartest",
   "displayName": "Refactor Radar",
   "description": "AI-powered VSCode extension for code analysis and refactoring",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "MarkAlejo",
   "engines": {
     "vscode": "^1.102.0"
@@ -11,7 +11,9 @@
     "type": "git",
     "url": "https://github.com/MarkAnthonyAlejo/refactor-radar-frontend"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onView:refactorFileView",
     "onCommand:refactor-radartest.runRefactor"
