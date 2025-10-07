@@ -64,6 +64,10 @@ class FileTreeProvider implements vscode.TreeDataProvider<FileNode> {
   getSelectedFiles(): vscode.Uri[] {
     return Array.from(this.selectedFiles).map((path) => vscode.Uri.file(path));
   }
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire(undefined);
+  }
 }
 
 // =======================================================
@@ -127,23 +131,14 @@ function buildPrettyDiffHtml(original: string, refactored: string): string {
       const lines = part.value.split('\n');
       if (part.added)
         return lines
-          .map(
-            (l: string) =>
-              `<div class="added">${escapeHtml(l)}</div>`
-          )
+          .map((l: string) => `<div class="added">${escapeHtml(l)}</div>`)
           .join('');
       if (part.removed)
         return lines
-          .map(
-            (l: string) =>
-              `<div class="removed">${escapeHtml(l)}</div>`
-          )
+          .map((l: string) => `<div class="removed">${escapeHtml(l)}</div>`)
           .join('');
       return lines
-        .map(
-          (l: string) =>
-            `<div class="unchanged">${escapeHtml(l)}</div>`
-        )
+        .map((l: string) => `<div class="unchanged">${escapeHtml(l)}</div>`)
         .join('');
     })
     .join('');
@@ -171,7 +166,6 @@ function buildPrettyDiffHtml(original: string, refactored: string): string {
   `;
 }
 
-
 // =======================================================
 // ------------------ Webview Builders -----------------
 // =======================================================
@@ -196,16 +190,15 @@ async function getWebviewContent(result: any): Promise<string> {
       <ul>${(suggestions || []).map((s: string) => `<li>${s}</li>`).join('')}</ul>
 
       <h2 style="color:#F0F6FD;">Original Code</h2>
-		<pre style="
-  			background:#0C1117;
-  			border:1px solid #3D444D;
-  			border-radius:6px;
-  			padding:1rem;
-  			overflow-x:auto;
-		">
-  			<code class="language-${lang}">${escapeHtml(formattedOriginal)}</code>
-		</pre>
-
+      <pre style="
+        background:#0C1117;
+        border:1px solid #3D444D;
+        border-radius:6px;
+        padding:1rem;
+        overflow-x:auto;
+      ">
+        <code class="language-${lang}">${escapeHtml(formattedOriginal)}</code>
+      </pre>
 
       <h2 style="display:flex; align-items:center; gap:0.5rem; color:#228736; font-weight:600;">
         Refactored Code
@@ -217,9 +210,7 @@ async function getWebviewContent(result: any): Promise<string> {
           border-radius:12px;
           text-transform:uppercase;
           letter-spacing:0.5px;
-        ">
-          New
-        </span>
+        ">New</span>
       </h2>
       <div style="border-left:3px solid #228736; padding-left:0.75rem; margin-top:0.5rem;">
         <pre style="
@@ -237,9 +228,7 @@ async function getWebviewContent(result: any): Promise<string> {
       <h2>Diff</h2>
       ${diffHtml}
 
-      <button id="accept" data-filename="${filename}" data-code="${encodeURIComponent(refactoredCode || '')}">
-        Refactor
-      </button>
+      <button id="accept" data-filename="${filename}" data-code="${encodeURIComponent(refactoredCode || '')}">Refactor</button>
       <button id="reject" data-filename="${filename}">Reject</button>
     </section>
 
@@ -300,6 +289,16 @@ async function getFullWebviewContent(results: any[]): Promise<string> {
 export function activate(context: vscode.ExtensionContext) {
   const fileTreeProvider = new FileTreeProvider();
   vscode.window.registerTreeDataProvider('refactorFileView', fileTreeProvider);
+
+  // Refresh tree when workspace folders change
+  vscode.workspace.onDidChangeWorkspaceFolders(() => fileTreeProvider.refresh());
+
+  // Refresh tree when files are created/changed/deleted
+  const fileWatcher = vscode.workspace.createFileSystemWatcher('**/*.{ts,js,tsx,jsx,html,css,json}');
+  fileWatcher.onDidCreate(() => fileTreeProvider.refresh());
+  fileWatcher.onDidDelete(() => fileTreeProvider.refresh());
+  fileWatcher.onDidChange(() => fileTreeProvider.refresh());
+  context.subscriptions.push(fileWatcher);
 
   // Toggle File Selection
   const toggleFileSelectCommand = vscode.commands.registerCommand(
@@ -396,6 +395,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(runRefactorCommand);
+
+  // Initial refresh so sidebar shows files immediately
+  fileTreeProvider.refresh();
 }
 
 // =======================================================

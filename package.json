@@ -2,7 +2,7 @@
   "name": "refactor-radartest",
   "displayName": "Refactor Radar",
   "description": "AI-powered VSCode extension for code analysis and refactoring",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "MarkAlejo",
   "engines": {
     "vscode": "^1.102.0"
@@ -11,64 +11,37 @@
     "type": "git",
     "url": "https://github.com/MarkAnthonyAlejo/refactor-radar-frontend"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
+  "main": "./out/extension.js",
   "activationEvents": [
-    "onView:refactorFileView",
+    "onCommand:refactor-radartest.helloWorld",
+    "onCommand:refactor-radartest.refactorCode",
+    "onCommand:refactor-radartest.toggleFileSelect",
     "onCommand:refactor-radartest.runRefactor"
   ],
-  "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "refactor-radartest.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "refactor-radartest.refactorCode",
-        "title": "Refactor Code"
-      },
-      {
-        "command": "refactor-radartest.toggleFileSelect",
-        "title": "Toggle File Selection"
-      },
-      {
-        "command": "refactor-radartest.runRefactor",
-        "title": "Run Refactor"
-      }
+      { "command": "refactor-radartest.helloWorld", "title": "Hello World" },
+      { "command": "refactor-radartest.refactorCode", "title": "Refactor Code" },
+      { "command": "refactor-radartest.toggleFileSelect", "title": "Toggle File Selection" },
+      { "command": "refactor-radartest.runRefactor", "title": "Run Refactor" }
     ],
     "viewsContainers": {
       "activitybar": [
-        {
-          "id": "refactorRadarSidebar",
-          "title": "Refactor Radar",
-          "icon": "resources/Radar2.svg"
-        }
+        { "id": "refactorRadarSidebar", "title": "Refactor Radar", "icon": "resources/Radar2.svg" }
       ]
     },
     "views": {
       "refactorRadarSidebar": [
-        {
-          "id": "refactorFileView",
-          "name": "Project Files"
-        }
+        { "id": "refactorFileView", "name": "Project Files" }
       ]
     },
     "menus": {
       "view/title": [
-        {
-          "command": "refactor-radartest.runRefactor",
-          "when": "view == refactorFileView",
-          "group": "navigation"
-        }
+        { "command": "refactor-radartest.runRefactor", "when": "view == refactorFileView", "group": "navigation" }
       ],
       "view/item/context": [
-        {
-          "command": "refactor-radartest.toggleFileSelect",
-          "when": "view == refactorFileView",
-          "group": "inline"
-        }
+        { "command": "refactor-radartest.toggleFileSelect", "when": "view == refactorFileView", "group": "inline" }
       ]
     }
   },
